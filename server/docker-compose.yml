@@ -25,6 +25,11 @@ services:
       - 5000:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+  rd:
+    image: redis:alpine
+    command: ["redis-server"]
+    ports:
+      - 6000:6379 
   
 volumes:
   postgres_data: {}

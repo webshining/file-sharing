@@ -17,6 +17,8 @@ export const DB_HOST: string | undefined = process.env.DB_HOST
 
 export const LOGGING: boolean = process.env.LOGGING === 'true'
 
+// redis
+export const REDIS_URI: string = String(process.env.REDIS_URI)
 
 // auth
 export const JWT_ACCESS_SECRET: string = process.env.JWT_ACCESS_SECRET || 'secret_access_key'
@@ -42,4 +44,3 @@ export const GITHUB_AUTH_URI: string = 'https://github.com/login/oauth/authorize
 export const GITHUB_TOKEN_URI: string = 'https://github.com/login/oauth/access_token';
 export const GITHUB_REDIRECT_URI: string = 'http://localhost:4000/api/auth/github'
 export const GITHUB_USER_INFO_URI: string = 'https://api.github.com/user'
-export const GITHUB_USER_EMAILS_URI: string = 'https://api.github.com/user/emails'

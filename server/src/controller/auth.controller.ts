@@ -14,6 +14,7 @@ import {
 	GOOGLE_SCOPES,
 	GOOGLE_USER_INFO_URI
 } from "../data/config";
+import { LoginUserDto, RegisterUserDto } from "../dto/user.dto";
 import { User } from "../models/user.entity";
 import AuthService from "../services/auth.service";
 import ModelService from "../services/model.service";
@@ -44,13 +45,17 @@ class AuthController {
 					headers: { Authorization: `Bearer ${id_token}` },
 				})
 			).json();
-			const user = await this.userService.getOrCreate(
-				{ email, auth: "google" },
-				{ name, email, auth: "google" },
-				["email"]
-			);
-			const {accessToken, refreshToken} = this.authService.generateTokens({user: user.id}, {user: user.id})
-			return res.cookie('refreshToken', refreshToken, {maxAge: 24*60*60*1000, httpOnly: true, secure: true}).json({ user, accessToken });
+			if(email && name) {
+				const user = await this.userService.getOrCreate(
+					{ email, google: true },
+					{ name, email, google: true },
+					["email"]
+				);
+				const {accessToken, refreshToken} = await this.authService.generateTokens({user: user.id}, {user: user.id})
+				return res.cookie('refreshToken', refreshToken, {maxAge: 24*60*60*1000, httpOnly: true, secure: true}).json({ user, accessToken });
+			} else {
+				return res.json({error: "Auth error"})
+			}
 		} else {
 			const stringifiedParams = new URLSearchParams({
 				client_id: GOOGLE_CLIENT_ID,
@@ -71,8 +76,8 @@ class AuthController {
 			const stringifiedParams = new URLSearchParams({
 				client_id: GITHUB_CLIENT_ID,
 				client_secret: GITHUB_CLIENT_SECRET,
-				code,
 				redirect_uri: GITHUB_REDIRECT_URI,
+				code,
 			});
 			const { access_token } = await (
 				await fetch(`${GITHUB_TOKEN_URI}?${stringifiedParams}`, {
@@ -80,13 +85,23 @@ class AuthController {
 					headers: { Accept: "application/json" },
 				})
 			).json();
-			const data = await (
+			const {id: github_id, name} = await (
 				await fetch(GITHUB_USER_INFO_URI, {
 					method: "get",
 					headers: { Authorization: `Bearer ${access_token}` },
 				})
 			).json();
-			return res.json(data);
+			if(github_id && name) {
+				const user = await this.userService.getOrCreate(
+					{ github_id },
+					{ name, github_id },
+					["github_id"]
+				);
+				const {accessToken, refreshToken} = await this.authService.generateTokens({user: user.id}, {user: user.id})
+				return res.cookie('refreshToken', refreshToken, {maxAge: 24*60*60*1000, httpOnly: true, secure: true}).json({ user, accessToken });
+			} else {
+				return res.json({error: "Auth error"})
+			}
 		} else {
 			const stringifiedParams = new URLSearchParams({
 				client_id: GITHUB_CLIENT_ID,
@@ -96,6 +111,37 @@ class AuthController {
 			return res.redirect(`${GITHUB_AUTH_URI}?${stringifiedParams}`);
 		}
 	};
+
+	register = async (req: Request<{}, {}, RegisterUserDto>, res: Response) => {
+		const {email, name, password} = req.body
+		const candidate = await this.userService.getOne({email})
+		if(candidate)
+			return res.json({error: "User already exists"})
+			const hashPass = await this.authService.hashPass(password)
+		const user = await this.userService.create({email, name, password: hashPass})
+		const {accessToken, refreshToken} = await this.authService.generateTokens({user: user.id}, {user: user.id})
+		return res.cookie('refreshToken', refreshToken, {maxAge: 24*60*60*1000, httpOnly: true, secure: true}).json({ user, accessToken });
+	}
+
+	login = async (req: Request<{}, {}, LoginUserDto>, res: Response) => {
+		const {email, password} = req.body
+		const user = await this.userService.getOne({email})
+		if(!user || !user.password)
+			return res.json({error: "User is not found"})
+		const comparePass = await this.authService.comparePass(password, user.password)
+		if(!comparePass)
+			return res.json({error: "Incorrect password"})
+		const {accessToken, refreshToken} = await this.authService.generateTokens({user: user.id}, {user: user.id})
+		return res.cookie('refreshToken', refreshToken, {maxAge: 24*60*60*1000, httpOnly: true, secure: true}).json({ user, accessToken });
+	}
+
+	refresh = async (req: Request, res: Response) => {
+		return res.json("Ok")
+	}
+
+	logout = async (req: Request, res: Response) => {
+		return res.clearCookie('refreshToken', {secure: true, httpOnly: true}).json({message: "Success"})
+	}
 }
 
 export default new AuthController();

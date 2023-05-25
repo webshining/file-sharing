@@ -8,14 +8,17 @@ export class User {
 	@Generated("uuid")
 	id: string;
 
-	@Column({type: 'varchar', nullable: false, default: 'email'})
-	auth: 'google' | 'email' | 'github'
-
 	@Column({type: 'varchar', nullable: true})
 	name: string
 
-	@Column({type: 'varchar', nullable: false, unique: true})
+	@Column({type: 'varchar', nullable: true, unique: true})
 	email: string
+
+	@Column({type: 'boolean', default: false})
+	google: boolean
+
+	@Column({type: 'varchar', nullable: true, unique: true})
+	github_id: string
 
 	@Exclude()
 	@Column({type: 'varchar', nullable: true})
