@@ -1,11 +1,15 @@
 import dotenv from 'dotenv';
+import fs from 'fs';
 import path from 'path';
 dotenv.config()
 
 
-export const DIR = path.resolve()
-
+// server
 export const PORT = process.env.PORT || 7000
+
+export const DIR = path.resolve()
+export const KEY = fs.readFileSync(DIR + '/cert/key.pem')
+export const CERT = fs.readFileSync(DIR + '/cert/cert.pem')
 
 // database
 export const DB_NAME: string = process.env.DB_NAME || 'database'
@@ -32,7 +36,7 @@ export const GOOGLE_SCOPES: string[] = [
 ]
 export const GOOGLE_AUTH_URI: string = 'https://accounts.google.com/o/oauth2/v2/auth';
 export const GOOGLE_TOKEN_URI: string = 'https://oauth2.googleapis.com/token';
-export const GOOGLE_REDIRECT_URI: string = 'http://localhost:4000/api/auth/google';
+export const GOOGLE_REDIRECT_URI: string = String(process.env.GOOGLE_REDIRECT_URI);
 export const GOOGLE_USER_INFO_URI: string = 'https://www.googleapis.com/oauth2/v2/userinfo';
 // GitHub oauth
 export const GITHUB_CLIENT_ID: string = String(process.env.GITHUB_CLIENT_ID)
@@ -42,5 +46,5 @@ export const GITHUB_SCOPES: string[] = [
 ]
 export const GITHUB_AUTH_URI: string = 'https://github.com/login/oauth/authorize'
 export const GITHUB_TOKEN_URI: string = 'https://github.com/login/oauth/access_token';
-export const GITHUB_REDIRECT_URI: string = 'http://localhost:4000/api/auth/github'
+export const GITHUB_REDIRECT_URI: string = String(process.env.GITHUB_REDIRECT_URI)
 export const GITHUB_USER_INFO_URI: string = 'https://api.github.com/user'

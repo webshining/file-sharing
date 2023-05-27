@@ -14,6 +14,13 @@ class AuthService {
         return {accessToken, refreshToken}
     }
 
+    public tokenExists = async (token: string): Promise<boolean> => {
+        await client.connect()
+        const exists = await client.exists(token)
+        await client.disconnect()
+        return exists > 0
+    }
+
     public removeToken = async (token: string) => {
         await client.connect()
         await client.del(token)
