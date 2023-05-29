@@ -142,9 +142,8 @@ class AuthController {
 			.json({ user, accessToken });
 	};
 
-	refresh = async (req: Request, res: Response) => {
-		console.log(req.cookies);
-		return res.json("a");
+	refresh = async (err: any, req: Request, res: Response) => {
+		return res.json(err);
 	};
 
 	logout = async (req: Request, res: Response) => {
