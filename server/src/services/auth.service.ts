@@ -15,7 +15,7 @@ class AuthService {
     }
 
     refreshDecode = async (token: string): Promise<{err?: string, decode?: any}> => {
-        let err, decode
+        let err, decode = null
         await client.connect()
         const exists = await client.exists(token)
         if(!exists)
