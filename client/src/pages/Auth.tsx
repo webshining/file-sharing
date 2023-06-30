@@ -1,25 +1,57 @@
-import "../styles/auth.sass";
+import { Box, Button, Container, Input } from "@mui/material";
 
 const Auth = () => {
 	const onSubmit = (e: any) => {
 		e.preventDefault();
-		console.log("a");
 	};
 	return (
-		<div onSubmit={onSubmit} className="auth">
-			<div className="container">
-				<form className="auth__form">
-					<div className="auth__social">
-						<img src={require("../images/google.png")} alt="" />
-						<img src={require("../images/github.png")} alt="" />
-					</div>
-					<input className="auth__input" type="email" placeholder="Email" name="email" />
-					<input className="auth__input" type="password" placeholder="Password" name="password" />
-					<button className="auth__submit" type="submit">
+		<Box width="100%" height="100%">
+			<Container
+				style={{
+					width: "100%",
+					height: "100%",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+				}}
+			>
+				<form
+					onSubmit={onSubmit}
+					style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "30px" }}
+				>
+					<Box display="flex" gap="30px">
+						<img
+							style={{ width: "30px", height: "30px", cursor: "pointer" }}
+							src={require("../images/google.png")}
+							alt=""
+						/>
+						<img
+							style={{ width: "30px", height: "30px", cursor: "pointer" }}
+							src={require("../images/github.png")}
+							alt=""
+						/>
+					</Box>
+					<Input
+						className="auth__input"
+						style={{ background: "#ffffff", borderRadius: "12px", padding: "5px 15px", width: "300px" }}
+						disableUnderline
+						type="email"
+						placeholder="Email"
+						required
+					/>
+					<Input
+						className="auth__input"
+						style={{ background: "#ffffff", borderRadius: "12px", padding: "5px 15px", width: "300px" }}
+						disableUnderline
+						type="password"
+						placeholder="Password"
+						required
+					/>
+					<Button variant="contained" className="auth__button" type="submit">
 						SIGN IN
-					</button>
+					</Button>
 				</form>
-				<div className="auth__img">
+				{/* <div className="auth__img">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						width="583.04004"
@@ -223,9 +255,9 @@ const Auth = () => {
 							/>
 						</g>
 					</svg>
-				</div>
-			</div>
-		</div>
+				</div> */}
+			</Container>
+		</Box>
 	);
 };
 
