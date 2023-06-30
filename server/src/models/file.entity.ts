@@ -1,15 +1,14 @@
-import { Column, Entity, Generated, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Link } from "./link.entity";
 
 @Entity({ name: "files" })
 export class File {
-	@PrimaryColumn({type:"uuid"})
-	@Generated("uuid")
+	@PrimaryGeneratedColumn()
 	id: string;
 
-	@Column({type: 'varchar', nullable: false})
-	name: string
+	@Column({ type: "varchar", nullable: false })
+	name: string;
 
-	@ManyToOne(() => Link, link => link.files)
-	link: Link
+	@ManyToOne(() => Link, (link) => link.files, { cascade: true })
+	link: Link;
 }

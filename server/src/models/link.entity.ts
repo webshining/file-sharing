@@ -1,16 +1,21 @@
-import { Entity, Generated, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { File } from "./file.entity";
-import { User } from './user.entity';
+import { User } from "./user.entity";
 
 @Entity({ name: "links" })
 export class Link {
-	@PrimaryColumn({type:"uuid"})
-	@Generated("uuid")
-	id: string;
+	@PrimaryGeneratedColumn()
+	id: number;
 
-    @ManyToOne(() => User, user => user.links)
-    user: User
+	@Column({ type: "varchar", nullable: false })
+	name: string;
 
-    @OneToMany(() => File, file => file.link)
-    files: File[]
+	@Column({ type: "varchar", nullable: false, unique: true })
+	href: string;
+
+	@ManyToOne(() => User, (user) => user.links)
+	user: User;
+
+	@OneToMany(() => File, (file) => file.link)
+	files: File[];
 }

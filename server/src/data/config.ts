@@ -27,6 +27,8 @@ export const REDIS_URI: string = String(process.env.REDIS_URI)
 // auth
 export const JWT_ACCESS_SECRET: string = process.env.JWT_ACCESS_SECRET || 'secret_access_key'
 export const JWT_REFRESH_SECRET: string = process.env.JWT_REFRESH_SECRET || 'secret_refresh_key'
+export const JWT_ACCESS_MINUTES: number = Number(process.env.JWT_ACCESS_MINUTES) || 5
+export const JWT_REFRESH_MINUTES: number = Number(process.env.JWT_REFRESH_MINUTES) || 21600
 // Google oauth
 export const GOOGLE_CLIENT_ID: string = String(process.env.GOOGLE_CLIENT_ID)
 export const GOOGLE_CLIENT_SECRET: string = String(process.env.GOOGLE_CLIENT_SECRET)
