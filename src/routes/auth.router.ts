@@ -10,5 +10,6 @@ router.get("/github/redirect", AuthController.redirect);
 router.post("/login", AuthController.login);
 router.post("/register", AuthController.register);
 router.get("/refresh", AuthController.refresh);
+router.get("/logout", AuthController.logout);
 
 export default router;

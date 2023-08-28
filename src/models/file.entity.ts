@@ -4,7 +4,7 @@ import { Link } from "./link.entity";
 @Entity({ name: "files" })
 export class File {
 	@PrimaryGeneratedColumn()
-	id: string;
+	id: number;
 
 	@Column({ type: "varchar", nullable: false })
 	name: string;

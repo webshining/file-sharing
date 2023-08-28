@@ -10,7 +10,7 @@ export class Link {
 	@Column({ type: "varchar", nullable: false, unique: true })
 	href: string;
 
-	@ManyToOne(() => User, (user) => user.links, { cascade: true })
+	@ManyToOne(() => User, (user) => user.links, { cascade: true, lazy: true })
 	user: User;
 
 	@OneToMany(() => File, (file) => file.link)

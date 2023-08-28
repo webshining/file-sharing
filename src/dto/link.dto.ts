@@ -1,12 +1,9 @@
 export interface LinkCreateDto {
 	href: string;
+	user: { id: number };
 }
 
 export interface LinkUpdateDto {
-	id: number;
 	href: string;
-}
-
-export interface LinkDeleteDto {
-	id: number;
+	user: { id: number };
 }
