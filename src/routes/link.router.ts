@@ -1,20 +1,23 @@
 import { Router } from "express";
+import { body, query } from "express-validator";
 import LinkController from "../controller/link.controller";
 import AuthMiddleware from "../middlewares/auth.middleware";
-import RequiredMiddleware from "../middlewares/required.middleware";
+import ErrorMiddleware from "../middlewares/error.middleware";
 
 const router = Router();
 
-const required = [
-	{
-		key: "href",
-		reg: /.{3,}/,
-	},
+const hrefValidation = [
+	body("href")
+		.notEmpty()
+		.withMessage("Href is required")
+		.custom((value: string) => value.replace(/\s*/, "")),
 ];
 
+const idValidation = [query("id").isInt().withMessage("Not valid id")];
+
 router.get("/", AuthMiddleware, LinkController.get);
-router.post("/", AuthMiddleware, RequiredMiddleware(required), LinkController.create);
-router.put("/:id", AuthMiddleware, RequiredMiddleware(required), LinkController.update);
-router.delete("/:id", AuthMiddleware, LinkController.delete);
+router.post("/", AuthMiddleware, hrefValidation, ErrorMiddleware, LinkController.create);
+router.put("/:id", AuthMiddleware, idValidation, ErrorMiddleware, LinkController.update);
+router.delete("/:id", AuthMiddleware, idValidation, ErrorMiddleware, LinkController.delete);
 
 export default router;
