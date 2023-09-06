@@ -2,4 +2,4 @@
 **/.env
 **/*-lock.json
 **/*.sqlite
-# **/dist
+**/dist

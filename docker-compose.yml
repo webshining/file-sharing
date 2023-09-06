@@ -3,33 +3,35 @@ version: '3.1'
 services:
   app:
     build: .
+    restart: on-failure
     ports:
-      - 7000:7000
       - 4000:4000
     environment:
+      PORT: 4000
       DB_NAME: postgres
       DB_USER: postgres
       DB_PASS: postgres
       DB_HOST: db
       DB_PORT: 5432
+      REDIS_URI: redis://rd:6379
     depends_on:
       - db
+      - rd
   db:
     image: postgres:alpine
-    restart: always
+    restart: unless-stopped
+    ports:
+      - 54322:5432
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
       POSTGRES_DB: postgres
-    ports:
-      - 5000:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data/
   rd:
     image: redis:alpine
+    restart: unless-stopped
     command: ["redis-server"]
-    ports:
-      - 6000:6379 
   
 volumes:
   postgres_data: {}

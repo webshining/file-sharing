@@ -13,6 +13,6 @@ export class Link {
 	@ManyToOne(() => User, (user) => user.links, { cascade: true, lazy: true })
 	user: User;
 
-	@OneToMany(() => File, (file) => file.link)
+	@OneToMany(() => File, (file) => file.link, { eager: true })
 	files: File[];
 }

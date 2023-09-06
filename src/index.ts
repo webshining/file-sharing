@@ -11,13 +11,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(
 	cors({
-		origin: [
-			"https://webshining.client.com",
-			"http://webshining.client.com",
-			"https://localhost:3000",
-			"http://localhost:3000",
-			"https://file-sharing-client-flax.vercel.app",
-		],
+		origin: [],
 		credentials: true,
 	})
 );

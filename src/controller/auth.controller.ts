@@ -21,7 +21,7 @@ class AuthController {
 		const comparePass = await this.authService.comparePass(password, user.password);
 		if (!comparePass) return res.json({ error: "Wrong password" });
 		const { accessToken, refreshToken } = await this.authService.generateTokens({ user: user.toJSON() }, { id: user.id });
-		return res.cookie("refreshToken", refreshToken, this.cookieOptions).json({ user, accessToken });
+		return res.cookie("refreshToken", refreshToken, this.cookieOptions).json({ accessToken });
 	};
 
 	register = async (req: Request<{}, {}, RegisterUserDto>, res: Response) => {
@@ -33,7 +33,7 @@ class AuthController {
 		const hashPass = await this.authService.hashPass(password);
 		const user = await this.userService.create({ name, email, password: hashPass });
 		const { accessToken, refreshToken } = await this.authService.generateTokens({ user: user.toJSON() }, { id: user.id });
-		return res.cookie("refreshToken", refreshToken, this.cookieOptions).json({ user, accessToken });
+		return res.cookie("refreshToken", refreshToken, this.cookieOptions).json({ accessToken });
 	};
 
 	oauth = async (req: Request<{}, {}, {}, { state?: string }>, res: Response) => {
@@ -60,7 +60,7 @@ class AuthController {
 					let user = await this.userService.getOne(isGoogle ? { google_id: id } : { github_id: id });
 					if (!user) user = await this.userService.create(isGoogle ? { name, google_id: id } : { name, github_id: id });
 					const { accessToken, refreshToken } = await this.authService.generateTokens({ user: user.toJSON() }, { id: user.id });
-					data = { user, accessToken };
+					data = { accessToken };
 					res.cookie("refreshToken", refreshToken, this.cookieOptions);
 				}
 			}
@@ -84,8 +84,10 @@ class AuthController {
 
 	logout = async (req: Request, res: Response) => {
 		const token = req.cookies["refreshToken"];
-		await this.authService.removeToken(token);
-		res.clearCookie("refreshToken", this.cookieOptions);
+		if (token) {
+			await this.authService.removeToken(token);
+			res.clearCookie("refreshToken", { ...this.cookieOptions, maxAge: 0 });
+		}
 		return res.send();
 	};
 }

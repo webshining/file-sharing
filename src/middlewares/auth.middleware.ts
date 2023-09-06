@@ -1,15 +1,18 @@
 import { NextFunction, Response } from "express";
+import { User } from "../models/user.entity";
 import AuthService from "../services/auth.service";
+import ModelService from "../services/model.service";
 
 export default async (req: any, res: Response, next: NextFunction) => {
 	const authService = new AuthService();
+	const userService = new ModelService<User>(User);
 
 	const authorization: string | null = req.headers.authorization;
-	if (!authorization) return res.json({ error: "Unauthorized" });
-	const authorization_data = authorization.split(" ");
-	if (authorization_data.length !== 2) return res.json({ error: "Unauthorized" });
-	const accessData = await authService.tokenDecode(authorization_data[1]);
+	if (!authorization || !authorization.startsWith("Bearer")) return res.json({ error: "Unauthorized" });
+	const accessData = await authService.tokenDecode(authorization.split(" ")[1]);
 	if (!accessData) return res.json({ error: "Unauthorized" });
-	req.body.user = { id: accessData.user.id };
+	const user = await userService.getOne({ id: accessData.user.id });
+	if (!user) return res.json({ error: "User not found" });
+	req.user = user;
 	next();
 };
