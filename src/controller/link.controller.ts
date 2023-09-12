@@ -12,25 +12,31 @@ class LinkController {
 		return res.json({ links });
 	};
 
+	getOne = async (req: Request<{ href: string }>, res: Response) => {
+		const link = await this.linkService.getOne({ href: req.params.href });
+		if (!link) return res.json({ error: "Link not found" });
+		return res.json({ link });
+	};
+
 	create = async (req: Request<{}, {}, LinkCreateDto>, res: Response) => {
 		const user = (req as any).user;
 		const { href } = req.body;
 		let link = await this.linkService.getOne({ href });
 		if (link) return res.json({ error: "Link already exists" });
 		link = await this.linkService.create({ href, user });
-		return res.json({ link });
+		return res.json({ message: "Success" });
 	};
 
 	update = async (req: Request<{ id: number }, {}, LinkUpdateDto>, res: Response) => {
 		const user = (req as any).user;
 		const { id } = req.params;
 		const { href } = req.body;
-		let link = await this.linkService.getOne({ href });
-		if (link && (await link.user).id !== user.id) return res.json({ error: "Link already exists" });
-		link = await this.linkService.getOne({ id });
+		const candidate = await this.linkService.getOne({ href });
+		if (candidate && (await candidate.user).id !== user.id) return res.json({ error: "Link already exists" });
+		let link = await this.linkService.getOne({ id });
 		if (!link) return res.json({ error: "Link not found" });
-		link = await this.linkService.update({ ...link, href });
-		return res.json({ link });
+		await this.linkService.update({ ...link, href });
+		return res.json({ message: "Success" });
 	};
 
 	delete = async (req: Request<{ id: number }>, res: Response) => {

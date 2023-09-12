@@ -1,4 +1,4 @@
-FROM node:alpine as build
+FROM node:20-slim as build
 
 WORKDIR /app
 
@@ -11,13 +11,13 @@ COPY . .
 RUN npm run build
 
 
-FROM node:alpine as production
+FROM node:20-slim
 
 WORKDIR /app
 
 COPY package.json .
 
-RUN npm install
+RUN npm install --production
 
 COPY --from=build /app/dist .
 

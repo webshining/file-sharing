@@ -4,6 +4,9 @@ services:
   app:
     build: .
     restart: on-failure
+    depends_on:
+      - db
+      - rd
     ports:
       - 4000:4000
     environment:
@@ -14,9 +17,6 @@ services:
       DB_HOST: db
       DB_PORT: 5432
       REDIS_URI: redis://rd:6379
-    depends_on:
-      - db
-      - rd
   db:
     image: postgres:alpine
     restart: unless-stopped
@@ -31,7 +31,6 @@ services:
   rd:
     image: redis:alpine
     restart: unless-stopped
-    command: ["redis-server"]
   
 volumes:
   postgres_data: {}

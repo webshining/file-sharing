@@ -25,7 +25,7 @@ export class User {
 	@Column({ type: "varchar", nullable: true, unique: true })
 	github_id: string;
 
-	@OneToMany(() => Link, (link) => link.user)
+	@OneToMany(() => Link, (link) => link.user, { lazy: true })
 	links: Link[];
 
 	toJSON() {
