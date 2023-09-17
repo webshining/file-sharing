@@ -3,7 +3,7 @@ import path from "path";
 dotenv.config();
 
 // server
-export const PORT = process.env.PORT || 7000;
+export const PORT = process.env.PORT || 4000;
 
 export const DIR = path.resolve();
 

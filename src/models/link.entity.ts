@@ -10,9 +10,9 @@ export class Link {
 	@Column({ type: "varchar", nullable: false, unique: true })
 	href: string;
 
-	@ManyToOne(() => User, (user) => user.links, { cascade: true, eager: true })
+	@ManyToOne(() => User, (user) => user.links, { onDelete: "CASCADE", eager: true })
 	user: User;
 
-	@OneToMany(() => File, (file) => file.link, { eager: true })
+	@OneToMany(() => File, (file) => file.link, { eager: true, cascade: true })
 	files: File[];
 }

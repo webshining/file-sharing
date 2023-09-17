@@ -9,6 +9,6 @@ export class File {
 	@Column({ type: "varchar", nullable: false })
 	name: string;
 
-	@ManyToOne(() => Link, (link) => link.files, { cascade: true, lazy: true })
+	@ManyToOne(() => Link, (link) => link.files, { onDelete: "CASCADE", lazy: true })
 	link: Link;
 }

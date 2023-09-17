@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import fs from "fs";
+import { DIR } from "../data/config";
 import { LinkCreateDto, LinkUpdateDto } from "../dto/link.dto";
 import { Link } from "../models/link.entity";
 import ModelService from "../services/model.service";
@@ -28,11 +30,11 @@ class LinkController {
 	};
 
 	update = async (req: Request<{ id: number }, {}, LinkUpdateDto>, res: Response) => {
-		const user = (req as any).user;
+		const user = req as any;
 		const { id } = req.params;
 		const { href } = req.body;
 		const candidate = await this.linkService.getOne({ href });
-		if (candidate && (await candidate.user).id !== user.id) return res.json({ error: "Link already exists" });
+		if (candidate && candidate.user.id !== user.id) return res.json({ error: "Link already exists" });
 		let link = await this.linkService.getOne({ id });
 		if (!link) return res.json({ error: "Link not found" });
 		await this.linkService.update({ ...link, href });
@@ -44,6 +46,7 @@ class LinkController {
 		const { id } = req.params;
 		const link = await this.linkService.getOne({ id, user });
 		if (!link) return res.json({ error: "Link not found" });
+		link.files.forEach((f) => fs.unlink(`${DIR}/files/${f.id}`, () => {}));
 		await this.linkService.delete({ id, user });
 		return res.json({ message: "Success" });
 	};

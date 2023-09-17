@@ -10,13 +10,14 @@ services:
     ports:
       - 4000:4000
     environment:
-      PORT: 4000
       DB_NAME: postgres
       DB_USER: postgres
       DB_PASS: postgres
       DB_HOST: db
       DB_PORT: 5432
       REDIS_URI: redis://rd:6379
+    volumes:
+      - app_data:/app/files
   db:
     image: postgres:alpine
     restart: unless-stopped
@@ -34,3 +35,4 @@ services:
   
 volumes:
   postgres_data: {}
+  app_data: {}
