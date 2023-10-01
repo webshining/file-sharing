@@ -7,19 +7,13 @@ const router = Router();
 
 const loginValidation = [
 	body("email").notEmpty().withMessage("Email is required").isEmail().withMessage("Not valid email"),
-	body("password")
-		.notEmpty()
-		.withMessage("Password is required")
-		.custom((value: string) => value.replace(/\s*/, ""))
-		.isLength({ min: 6, max: 17 })
-		.withMessage("Not valid password"),
+	body("password").notEmpty().withMessage("Password is required").isLength({ min: 6, max: 17 }).withMessage("Password length must be from 6 to 17"),
 	ErrorMiddleware,
 ];
 
 const registerValidation = [
-	body("name").notEmpty().withMessage("Name is required").isLength({ min: 6 }).withMessage("Not valid name"),
+	body("name").notEmpty().withMessage("Name is required").isLength({ min: 6, max: 17 }).withMessage("Name length must be from 6 to 17"),
 	...loginValidation,
-	ErrorMiddleware,
 ];
 
 router.get("/google", AuthController.oauth);

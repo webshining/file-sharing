@@ -10,6 +10,8 @@ const hrefBodyValidation = [
 	body("href")
 		.notEmpty()
 		.withMessage("Href is required")
+		.isLength({ min: 3, max: 15 })
+		.withMessage("Href length must be from 6 to 17")
 		.customSanitizer((value: string) => value.replace(/\s*/g, "")),
 	ErrorMiddleware,
 ];
