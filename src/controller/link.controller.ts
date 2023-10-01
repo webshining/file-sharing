@@ -10,7 +10,7 @@ class LinkController {
 
 	get = async (req: Request, res: Response) => {
 		const user = (req as any).user;
-		const links = await this.linkService.getMany({ user });
+		const links = (await this.linkService.getMany({ user })).sort((a, b) => a.id - b.id);
 		return res.json({ links });
 	};
 
