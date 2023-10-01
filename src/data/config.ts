@@ -36,7 +36,7 @@ export const GOOGLE_USER_INFO_URI: string = "https://www.googleapis.com/oauth2/v
 // GitHub oauth
 export const GITHUB_CLIENT_ID: string = String(process.env.GITHUB_CLIENT_ID);
 export const GITHUB_CLIENT_SECRET: string = String(process.env.GITHUB_CLIENT_SECRET);
-export const GITHUB_SCOPES: string[] = ["user:email"];
+export const GITHUB_SCOPES: string[] = ["user:email", "read:user"];
 export const GITHUB_AUTH_URI: string = "https://github.com/login/oauth/authorize";
 export const GITHUB_TOKEN_URI: string = "https://github.com/login/oauth/access_token";
 export const GITHUB_REDIRECT_URI: string = String(process.env.GITHUB_REDIRECT_URI);

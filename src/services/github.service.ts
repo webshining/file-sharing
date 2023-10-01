@@ -3,9 +3,9 @@ import {
 	GITHUB_CLIENT_ID,
 	GITHUB_CLIENT_SECRET,
 	GITHUB_REDIRECT_URI,
+	GITHUB_SCOPES,
 	GITHUB_TOKEN_URI,
 	GITHUB_USER_INFO_URI,
-	GOOGLE_SCOPES,
 } from "../data/config";
 
 class GithubService {
@@ -13,7 +13,7 @@ class GithubService {
 		const params = new URLSearchParams({
 			client_id: GITHUB_CLIENT_ID,
 			redirect_uri: GITHUB_REDIRECT_URI,
-			scope: GOOGLE_SCOPES.join(" "),
+			scope: GITHUB_SCOPES.join(" "),
 			state: state || "",
 		});
 		return `${GITHUB_AUTH_URI}?${params}`;
@@ -31,7 +31,7 @@ class GithubService {
 	};
 
 	getUserInfo = async (access_token: string): Promise<any> => {
-		const response = await (await fetch(`${GITHUB_USER_INFO_URI}`, { headers: { Authorization: `Bearer ${access_token}` } })).json();
+		const response = await (await fetch(GITHUB_USER_INFO_URI, { headers: { Authorization: `Bearer ${access_token}` } })).json();
 		return response;
 	};
 }
