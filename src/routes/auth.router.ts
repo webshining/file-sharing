@@ -7,12 +7,12 @@ const router = Router();
 
 const loginValidation = [
 	body("email").notEmpty().withMessage("Email is required").isEmail().withMessage("Not valid email"),
-	body("password").notEmpty().withMessage("Password is required").isLength({ min: 6, max: 17 }).withMessage("Password length must be from 6 to 17"),
+	body("password").notEmpty().withMessage("Password is required").isLength({ min: 6, max: 17 }).withMessage("isLength {min: 6, max: 17}"),
 	ErrorMiddleware,
 ];
 
 const registerValidation = [
-	body("name").notEmpty().withMessage("Name is required").isLength({ min: 6, max: 17 }).withMessage("Name length must be from 6 to 17"),
+	body("name").notEmpty().withMessage("Name is required").isLength({ min: 3, max: 15 }).withMessage("isLength {min: 3, max: 15}"),
 	...loginValidation,
 ];
 
