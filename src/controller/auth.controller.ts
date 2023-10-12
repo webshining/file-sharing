@@ -12,7 +12,13 @@ class AuthController {
 	private readonly authService = new AuthService();
 	private readonly googleService = new GoogleService();
 	private readonly githubService = new GithubService();
-	private readonly cookieOptions: CookieOptions = { maxAge: JWT_REFRESH_MINUTES * 60 * 1000, httpOnly: true, sameSite: "none", secure: true };
+	private readonly cookieOptions: CookieOptions = {
+		maxAge: JWT_REFRESH_MINUTES * 60 * 1000,
+		httpOnly: true,
+		sameSite: "none",
+		secure: true,
+		domain: ".webshining.space",
+	};
 
 	login = async (req: Request<{}, {}, LoginUserDto>, res: Response) => {
 		const { email, password } = req.body;

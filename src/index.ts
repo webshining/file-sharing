@@ -13,7 +13,7 @@ app.use(express.json({ limit: "1000mb" }));
 app.use(fileUpload({}));
 app.use(
 	cors({
-		origin: ["https://webshining.fun", "http://localhost:3000"],
+		origin: ["https://webshining.fun"],
 		credentials: true,
 	})
 );
