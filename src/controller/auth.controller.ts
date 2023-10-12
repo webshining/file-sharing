@@ -17,7 +17,7 @@ class AuthController {
 		httpOnly: true,
 		sameSite: "none",
 		secure: true,
-		domain: ".webshining.space",
+		domain: ".webshining.fun",
 	};
 
 	login = async (req: Request<{}, {}, LoginUserDto>, res: Response) => {
