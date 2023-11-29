@@ -31,7 +31,8 @@ class AuthService {
 		return decode;
 	};
 
-	isTokenExists = async (token: string): Promise<boolean> => {
+	isTokenExists = async (token?: string): Promise<boolean> => {
+		if (!token) return false;
 		await client.connect();
 		const exists = await client.exists(token);
 		await client.disconnect();

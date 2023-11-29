@@ -77,13 +77,12 @@ class AuthController {
 
 	refresh = async (req: Request, res: Response) => {
 		const token = req.cookies["refreshToken"];
-		if (!token) return res.json({ error: "Unauthorized" });
-		if (!(await this.authService.isTokenExists(token))) return res.json({ error: "Unauthorized" });
+		if (!(await this.authService.isTokenExists(token))) return res.status(401).json({ error: "Unauthorized" });
 		const refresh: any = await this.authService.tokenDecode(token, true);
 		await this.authService.removeToken(token);
-		if (!refresh) return res.json({ error: "Unauthorized" });
+		if (!refresh) return res.status(401).json({ error: "Unauthorized" });
 		const user = await this.userService.getOne({ id: refresh.id });
-		if (!user) return res.json({ error: "Unauthorized" });
+		if (!user) return res.status(401).json({ error: "Unauthorized" });
 		const { accessToken, refreshToken } = await this.authService.generateTokens({ user: user.toJSON() }, { id: user.id });
 		return res.cookie("refreshToken", refreshToken, this.cookieOptions).json({ accessToken });
 	};
