@@ -53,26 +53,30 @@ class AuthController {
 		const isGoogle: boolean = req.path === "/google/redirect";
 		const service = isGoogle ? this.googleService : this.githubService;
 		const { error, code, state } = req.query;
-		let data = null;
-		if (error) data = req.query;
-		if (!data) {
-			const token = await service.getToken(code);
-			if (token["error"]) data = token;
-			if (!data) {
-				const userinfo = await service.getUserInfo(token["access_token"]);
-				if (userinfo["error"]) data = userinfo;
-				if (!data) {
-					const { id, name } = userinfo;
-					let user = await this.userService.getOne(isGoogle ? { google_id: id } : { github_id: id });
-					if (!user) user = await this.userService.create(isGoogle ? { name, google_id: id } : { name, github_id: id });
-					const { accessToken, refreshToken } = await this.authService.generateTokens({ user: user.toJSON() }, { id: user.id });
-					data = { accessToken };
-					res.cookie("refreshToken", refreshToken, this.cookieOptions);
-				}
-			}
+
+		if (error) {
+			if (state) return res.redirect(state + "#" + JSON.stringify(req.query));
+			return res.json(req.query);
 		}
-		if (state) return res.redirect(state + "#" + JSON.stringify(data));
-		return res.json(data);
+		const tokens = await service.getToken(code);
+		if (tokens["error"]) {
+			if (state) return res.redirect(state + "#" + JSON.stringify(tokens));
+			return res.json(tokens);
+		}
+		const userinfo = await service.getUserInfo(tokens["id_token"]);
+		if (userinfo["error"]) {
+			if (state) return res.redirect(state + "#" + JSON.stringify(userinfo));
+			return res.json(userinfo);
+		}
+
+		const { sub, name } = userinfo;
+		let user = await this.userService.getOne(isGoogle ? { google_id: sub } : { github_id: sub });
+		if (!user) user = await this.userService.create(isGoogle ? { name, google_id: sub } : { name, github_id: sub });
+		const { accessToken, refreshToken } = await this.authService.generateTokens({ user: user.toJSON() }, { id: user.id });
+
+		res.cookie("refreshToken", refreshToken, this.cookieOptions);
+		if (state) return res.redirect(state + "#" + JSON.stringify({ accessToken }));
+		return res.json({ accessToken });
 	};
 
 	refresh = async (req: Request, res: Response) => {

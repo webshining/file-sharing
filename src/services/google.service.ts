@@ -1,12 +1,5 @@
-import {
-	GOOGLE_AUTH_URI,
-	GOOGLE_CLIENT_ID,
-	GOOGLE_CLIENT_SECRET,
-	GOOGLE_REDIRECT_URI,
-	GOOGLE_SCOPES,
-	GOOGLE_TOKEN_URI,
-	GOOGLE_USER_INFO_URI,
-} from "../data/config";
+import jwt from "jsonwebtoken";
+import { GOOGLE_AUTH_URI, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI, GOOGLE_SCOPES, GOOGLE_TOKEN_URI } from "../data/config";
 
 class GoogleService {
 	generateUrl = async (state: string): Promise<string> => {
@@ -37,9 +30,8 @@ class GoogleService {
 		return response;
 	};
 
-	getUserInfo = async (access_token: string): Promise<any> => {
-		const response = await (await fetch(`${GOOGLE_USER_INFO_URI}?access_token=${access_token}`, { method: "get" })).json();
-		return response;
+	getUserInfo = async (token: string): Promise<any> => {
+		return jwt.decode(token);
 	};
 }
 
