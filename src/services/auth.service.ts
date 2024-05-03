@@ -4,6 +4,8 @@ import { JWT_ACCESS_MINUTES, JWT_ACCESS_SECRET, JWT_REFRESH_MINUTES, JWT_REFRESH
 import client from "../rd";
 
 class AuthService {
+	private client = client;
+
 	generateTokens = async (accessPayload: any, refreshPayload: any): Promise<{ accessToken: string; refreshToken: string }> => {
 		const accessToken = jwt.sign(accessPayload, JWT_ACCESS_SECRET, { algorithm: "HS256", expiresIn: JWT_ACCESS_MINUTES * 60 });
 		const refreshToken = jwt.sign(refreshPayload, JWT_REFRESH_SECRET, { algorithm: "HS256", expiresIn: JWT_REFRESH_MINUTES * 60 });
@@ -12,15 +14,21 @@ class AuthService {
 	};
 
 	saveToken = async (token: string, ex: number) => {
-		await client.connect();
-		await client.set(token, "token", { EX: ex });
-		await client.disconnect();
+		try {
+			await this.connect();
+			await client.set(token, "token", { EX: ex });
+		} finally {
+			await this.disconnect();
+		}
 	};
 
 	removeToken = async (token: string) => {
-		await client.connect();
-		await client.del(token);
-		await client.disconnect();
+		try {
+			await this.connect();
+			await client.del(token);
+		} finally {
+			await this.disconnect();
+		}
 	};
 
 	tokenDecode = async (token: string, refresh: boolean = false): Promise<any | null> => {
@@ -33,10 +41,12 @@ class AuthService {
 
 	isTokenExists = async (token?: string): Promise<boolean> => {
 		if (!token) return false;
-		await client.connect();
-		const exists = await client.exists(token);
-		await client.disconnect();
-		return Boolean(exists);
+		try {
+			await this.connect();
+			return Boolean(await client.exists(token));
+		} finally {
+			await this.disconnect();
+		}
 	};
 
 	hashPass = async (password: string): Promise<string> => {
@@ -45,6 +55,18 @@ class AuthService {
 
 	comparePass = async (password: string, encrypted: string): Promise<boolean> => {
 		return bcrypt.compare(password, encrypted);
+	};
+
+	private connect = async () => {
+		if (!this.client.isOpen) {
+			await this.client.connect();
+		}
+	};
+
+	private disconnect = async () => {
+		if (this.client.isOpen) {
+			await this.client.disconnect();
+		}
 	};
 }
 

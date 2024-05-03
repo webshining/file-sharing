@@ -4,4 +4,5 @@ export interface LinkCreateDto {
 
 export interface LinkUpdateDto {
 	href: string;
+	files?: number[];
 }

@@ -17,17 +17,18 @@ class AuthController {
 		httpOnly: true,
 		sameSite: "none",
 		secure: true,
-		domain: ".webshining.fun",
+		// domain: ".webshining.fun",
 	};
 
 	login = async (req: Request<{}, {}, LoginUserDto>, res: Response) => {
-		const { email, password } = req.body;
-		const user = await this.userService.getOne({ email });
-		if (!user) return res.json({ error: "User not found" });
-		const comparePass = await this.authService.comparePass(password, user.password);
-		if (!comparePass) return res.json({ error: "Wrong password" });
-		const { accessToken, refreshToken } = await this.authService.generateTokens({ user: user.toJSON() }, { id: user.id });
-		return res.cookie("refreshToken", refreshToken, this.cookieOptions).json({ accessToken });
+		throw new Error("Abobe");
+		// const { email, password } = req.body;
+		// const user = await this.userService.getOne({ email });
+		// if (!user) return res.json({ error: "User not found" });
+		// const comparePass = await this.authService.comparePass(password, user.password);
+		// if (!comparePass) return res.json({ error: "Wrong password" });
+		// const { accessToken, refreshToken } = await this.authService.generateTokens({ user: user.toJSON() }, { id: user.id });
+		// return res.cookie("refreshToken", refreshToken, this.cookieOptions).json({ accessToken });
 	};
 
 	register = async (req: Request<{}, {}, RegisterUserDto>, res: Response) => {
