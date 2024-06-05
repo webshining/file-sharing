@@ -17,25 +17,24 @@ class AuthController {
 		httpOnly: true,
 		sameSite: "none",
 		secure: true,
-		// domain: ".webshining.fun",
+		domain: "localhost",
 	};
 
 	login = async (req: Request<{}, {}, LoginUserDto>, res: Response) => {
-		throw new Error("Abobe");
-		// const { email, password } = req.body;
-		// const user = await this.userService.getOne({ email });
-		// if (!user) return res.json({ error: "User not found" });
-		// const comparePass = await this.authService.comparePass(password, user.password);
-		// if (!comparePass) return res.json({ error: "Wrong password" });
-		// const { accessToken, refreshToken } = await this.authService.generateTokens({ user: user.toJSON() }, { id: user.id });
-		// return res.cookie("refreshToken", refreshToken, this.cookieOptions).json({ accessToken });
+		const { email, password } = req.body;
+		const user = await this.userService.getOne({ email });
+		if (!user) return res.status(404).json({ detail: "User not found" });
+		const comparePass = await this.authService.comparePass(password, user.password);
+		if (!comparePass) return res.status(401).json({ detail: "Wrong password" });
+		const { accessToken, refreshToken } = await this.authService.generateTokens({ user: user.toJSON() }, { id: user.id });
+		return res.cookie("refreshToken", refreshToken, this.cookieOptions).json({ accessToken });
 	};
 
 	register = async (req: Request<{}, {}, RegisterUserDto>, res: Response) => {
 		const { email, name, password } = req.body;
 		const candidate = await this.userService.getOne({ email });
 		if (candidate) {
-			return res.json({ error: "User already exists" });
+			return res.status(409).json({ detail: "User already exists" });
 		}
 		const hashPass = await this.authService.hashPass(password);
 		const user = await this.userService.create({ name, email, password: hashPass });
@@ -82,12 +81,12 @@ class AuthController {
 
 	refresh = async (req: Request, res: Response) => {
 		const token = req.cookies["refreshToken"];
-		if (!(await this.authService.isTokenExists(token))) return res.status(401).json({ error: "Unauthorized" });
+		if (!(await this.authService.isTokenExists(token))) return res.status(401).json({ detail: "Unauthorized" });
 		const refresh: any = await this.authService.tokenDecode(token, true);
 		await this.authService.removeToken(token);
-		if (!refresh) return res.status(401).json({ error: "Unauthorized" });
+		if (!refresh) return res.status(401).json({ detail: "Unauthorized" });
 		const user = await this.userService.getOne({ id: refresh.id });
-		if (!user) return res.status(401).json({ error: "Unauthorized" });
+		if (!user) return res.status(401).json({ detail: "Unauthorized" });
 		const { accessToken, refreshToken } = await this.authService.generateTokens({ user: user.toJSON() }, { id: user.id });
 		return res.cookie("refreshToken", refreshToken, this.cookieOptions).json({ accessToken });
 	};

@@ -18,13 +18,13 @@ class LinkController {
 
 	getFile = async (req: Request<{ href: string; id: number }>, res: Response) => {
 		const file = await this.fileService.getOne({ id: req.params.id });
-		if (!file || (await file.link).href !== req.params.href) return res.json({ error: "File not found" });
+		if (!file || (await file.link).href !== req.params.href) return res.status(404).json({ detail: "File not found" });
 		return res.download(DIR + "/files/" + file.id, file.name);
 	};
 
 	getOne = async (req: Request<{ href: string }>, res: Response) => {
 		const link = await this.linkService.getOne({ href: req.params.href });
-		if (!link) return res.json({ error: "Link not found" });
+		if (!link) return res.status(404).json({ detail: "Link not found" });
 		return res.json({ link });
 	};
 
@@ -32,7 +32,7 @@ class LinkController {
 		const user = (req as any).user;
 		const { href } = req.body;
 		let link = await this.linkService.getOne({ href });
-		if (link) return res.json({ error: "Link already exists" });
+		if (link) return res.json({ detail: "Link already exists" });
 		link = await this.linkService.create({ href, user });
 		return res.json({ message: "Success" });
 	};
@@ -42,9 +42,9 @@ class LinkController {
 		const { id } = req.params;
 		const { href, files } = req.body;
 		const candidate = await this.linkService.getOne({ href });
-		if (candidate && candidate.user.id !== user.id) return res.json({ error: "Link already exists" });
+		if (candidate && candidate.user.id !== user.id) return res.json({ detail: "Link already exists" });
 		let link = await this.linkService.getOne({ id });
-		if (!link) return res.json({ error: "Link not found" });
+		if (!link) return res.status(404).json({ detail: "Link not found" });
 		if (req.files)
 			for (const f of Object.keys(req.files)) {
 				const fu: any = (req.files as any)[f];
@@ -64,7 +64,7 @@ class LinkController {
 		const user = (req as any).user;
 		const { id } = req.params;
 		const link = await this.linkService.getOne({ id, user });
-		if (!link) return res.json({ error: "Link not found" });
+		if (!link) return res.status(404).json({ detail: "Link not found" });
 		link.files.forEach((f) => fs.unlink(`${DIR}/files/${f.id}`, () => {}));
 		await this.linkService.delete({ id, user });
 		return res.json({ message: "Success" });
